@@ -35,16 +35,6 @@ const authReducer = (state, action) => {
         case 'REGISTER_FAIL':
         case 'LOGIN_FAIL':
         case 'LOGOUT':
-            localStorage.removeItem('token');
-            return {
-                ...state,
-                token: null,
-                isAuthenticated: false,
-                loading: false,
-                user: null
-            };
-
-        // ✅ FIXED
         case 'AUTH_ERROR':
             localStorage.removeItem('token');
             return {
@@ -69,7 +59,7 @@ export const AuthProvider = ({ children }) => {
         if (token) {
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             try {
-                const res = await api.get('/auth/profile');
+                const res = await api.get('/api/auth/profile');
                 dispatch({
                     type: 'USER_LOADED',
                     payload: res.data
@@ -84,7 +74,7 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (formData) => {
         try {
-            const res = await api.post('/auth/register', formData);
+            const res = await api.post('/api/auth/register', formData);
 
             dispatch({
                 type: 'REGISTER_SUCCESS',
@@ -94,39 +84,33 @@ export const AuthProvider = ({ children }) => {
             await loadUser();
 
         } catch (err) {
-            dispatch({
-                type: 'REGISTER_FAIL'
-            });
+            dispatch({ type: 'REGISTER_FAIL' });
             throw err;
         }
     };
 
     const login = async (formData) => {
         try {
-            const res = await api.post('/auth/login', formData);
+            const res = await api.post('/api/auth/login', formData);
 
             dispatch({
                 type: 'LOGIN_SUCCESS',
                 payload: res.data
             });
 
-            // Try to load full profile (wishlist). Do NOT call loadUser() - it dispatches
-            // AUTH_ERROR on failure and wipes our login. Instead, fetch profile without clearing state.
             const token = res.data.token;
             if (token) {
                 api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
                 try {
-                    const profileRes = await api.get('/auth/profile');
+                    const profileRes = await api.get('/api/auth/profile');
                     dispatch({ type: 'USER_LOADED', payload: profileRes.data });
                 } catch (_) {
-                    // Profile failed - keep LOGIN_SUCCESS state, we have user from login response
+                    // ignore profile error
                 }
             }
 
         } catch (err) {
-            dispatch({
-                type: 'LOGIN_FAIL'
-            });
+            dispatch({ type: 'LOGIN_FAIL' });
             throw err;
         }
     };
@@ -134,7 +118,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => dispatch({ type: 'LOGOUT' });
 
     const updateProfile = async (data) => {
-        await api.put('/auth/profile', data);
+        await api.put('/api/auth/profile', data);
         await loadUser();
     };
 
