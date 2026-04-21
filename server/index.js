@@ -67,8 +67,7 @@ connectDB();
 // ==========================
 // Middleware
 // ==========================
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions)); // Handle preflight requests
+app.use(cors(corsOptions)); // handles preflight OPTIONS automatically
 app.use(express.json());
 
 // ==========================
