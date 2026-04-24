@@ -12,7 +12,7 @@ const AdminDashboard = () => {
     const [users, setUsers] = useState([]);
     const [products, setProducts] = useState([]);
     const [orders, setOrders] = useState([]);
-    const [stats, setStats] = useState({ totalUsers: 0, totalProducts: 0, totalOrders: 0, openReports: 0 });
+    const [stats, setStats] = useState({ totalUsers: 0, totalProducts: 0, totalOrders: 0 });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
     const [activeView, setActiveView] = useState('overview'); // overview | users | products | orders
