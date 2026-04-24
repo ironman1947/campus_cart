@@ -19,17 +19,10 @@ const UserSchema = new mongoose.Schema({
     },
 
     department: {
-    type: String,
-    enum: [
-        "Computer Engineering",
-        "Information Technology",
-        "Mechanical Engineering",
-        "Civil Engineering",
-        "Electronics Engineering",
-        "Electrical Engineering"
-    ],
-    required: true
-    },
+  type: String,
+  trim: true,
+  default: ""
+},
 
     year: {
         type: String,
