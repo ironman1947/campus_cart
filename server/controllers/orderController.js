@@ -237,6 +237,7 @@ CampusCart Team
 
 
 // ================= WITHDRAW REQUEST =================
+// ================= WITHDRAW REQUEST =================
 exports.withdrawRequest = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -251,12 +252,28 @@ exports.withdrawRequest = async (req, res) => {
       });
     }
 
+    // 🔥 Ensure product exists
+    const product = await Product.findById(order.productId);
+
+    if (!product) {
+      return res.status(404).json({ msg: "Product not found" });
+    }
+
+    // 🔥 IMPORTANT: restore product (if needed)
+    if (product.status === "sold" && product.soldTo?.toString() === order.buyerId.toString()) {
+      product.status = "available";   // or "unsold" based on your schema
+      product.soldTo = null;
+      await product.save();
+    }
+
+    // ✅ Delete order
     await Order.findByIdAndDelete(req.params.id);
 
     res.json({ msg: "Request withdrawn successfully" });
+
   } catch (err) {
     console.error("WITHDRAW ERROR:", err);
-    res.status(500).send("Server Error");
+    res.status(500).json({ msg: err.message });
   }
 };
 
