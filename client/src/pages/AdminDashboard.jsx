@@ -144,7 +144,7 @@ const AdminDashboard = () => {
                             { label: 'Total Users', value: stats.totalUsers || 0, icon: 'fa-users', color: '#4f46e5', bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
                             { label: 'Total Products', value: stats.totalProducts || 0, icon: 'fa-box-open', color: '#059669', bg: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)' },
                             { label: 'Total Orders', value: stats.totalOrders || 0, icon: 'fa-receipt', color: '#d97706', bg: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' },
-                            { label: 'Open Reports', value: stats.openReports || 0, icon: 'fa-flag', color: '#dc2626', bg: 'linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%)' },
+                           
                         ].map((card) => (
                             <Col md={3} sm={6} key={card.label}>
                                 <Card className="border-0 shadow-sm" style={{
