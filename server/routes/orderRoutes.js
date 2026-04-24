@@ -459,6 +459,9 @@ router.put("/reject/:id", authMiddleware, async (req, res) => {
 // ======================================================
 // 🗑️ WITHDRAW REQUEST (Buyer)
 // ======================================================
+// ======================================================
+// 🗑️ WITHDRAW REQUEST (Buyer)
+// ======================================================
 router.delete("/withdraw/:id", authMiddleware, async (req, res) => {
   try {
     const order = await Order.findOne({
@@ -473,18 +476,29 @@ router.delete("/withdraw/:id", authMiddleware, async (req, res) => {
 
     const productId = order.productId;
 
-    // Soft-delete: set status to withdrawn
-     await Order.findByIdAndDelete(req.params.id);
+    // ❌ DELETE ORDER (correct approach)
+    await Order.findByIdAndDelete(req.params.id);
 
-    // ✅ Reset product status back to available so it reappears in marketplace
+    // ❗ IMPORTANT: DO NOT blindly set available
+    // Only update if product exists and is not sold via accepted order
     if (productId) {
-      await Product.findByIdAndUpdate(productId, {
-        status: "available",
-        $unset: { soldTo: "" },
+      const existingAcceptedOrder = await Order.findOne({
+        productId,
+        status: "accepted",
       });
+
+      // ✅ Only make available if NO accepted order exists
+      if (!existingAcceptedOrder) {
+        await Product.findByIdAndUpdate(productId, {
+          status: "available",
+          $unset: { soldTo: "" },
+        });
+      }
     }
 
-    res.json({ msg: "Request withdrawn successfully. Product is now available again." });
+    res.json({
+      msg: "Request withdrawn successfully. Product is now visible in marketplace.",
+    });
 
   } catch (error) {
     console.error("Withdraw Error:", error);
