@@ -33,7 +33,7 @@ const Register = () => {
 
         try {
             await register({ name, email, phone, department, year, password });
-            navigate('/');
+            navigate('/home');
         } catch (err) {
             setError(err.response?.data?.msg || 'Registration Failed');
         }
