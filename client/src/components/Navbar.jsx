@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { Navbar, Nav, Container, Button, Form, Image, Badge } from 'react-bootstrap';
 import { AuthContext } from '../context/AuthContext';
 import './Navbar.css'; // Hover + active styles
@@ -10,6 +10,7 @@ const Navigation = () => {
     const { isAuthenticated, logout, user } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [unreadTotal, setUnreadTotal] = useState(0);
 
     const myId = useMemo(() => user?._id || user?.id, [user]);
@@ -106,10 +107,12 @@ const Navigation = () => {
                 <Navbar.Collapse>
                     {/* ================= SEARCH ================= */}
                     {showSearch && (
-                        <Form className="d-flex mx-lg-4 flex-grow-1">
+                        <Form className="d-flex mx-lg-4 flex-grow-1" onSubmit={e => e.preventDefault()}>
                             <Form.Control
                                 type="search"
                                 placeholder="Search items..."
+                                value={searchParams.get('q') || ''}
+                                onChange={(e) => setSearchParams({ q: e.target.value })}
                             />
                         </Form>
                     )}

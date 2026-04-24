@@ -4,6 +4,17 @@ import { getImageUrl } from "../utils/imageUrl";
 import "./requests.css";
 import { useNavigate } from "react-router-dom";
 
+const DESC_LIMIT = 200;
+
+const ReadMore = ({ text }) => {
+  const [expanded, setExpanded] = useState(false);
+  if (!text) return <span>No description</span>;
+  if (text.length <= DESC_LIMIT) return <span>{text}</span>;
+  return expanded
+    ? <span>{text} <button className="btn btn-link p-0" style={{ fontSize: '0.82rem', verticalAlign: 'baseline' }} onClick={() => setExpanded(false)}>Show Less</button></span>
+    : <span>{text.slice(0, DESC_LIMIT)}… <button className="btn btn-link p-0" style={{ fontSize: '0.82rem', verticalAlign: 'baseline' }} onClick={() => setExpanded(true)}>Read More</button></span>;
+};
+
 const BuyerRequests = () => {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [acceptedOrders, setAcceptedOrders] = useState([]);
@@ -67,7 +78,7 @@ const BuyerRequests = () => {
               </h3>
               <div className="product-price">₹{order.amount}</div>
               <div className="request-meta"><b>Category:</b> {order.category || "N/A"}</div>
-              <div className="request-meta"><b>Description:</b> {order.description || "No description"}</div>
+              <div className="request-meta"><b>Description:</b> <ReadMore text={order.description} /></div>
               {order.sellerId?._id && (
                 <div className="request-meta d-flex align-items-center gap-2">
                   <img
@@ -126,7 +137,7 @@ const BuyerRequests = () => {
               </h3>
               <div className="product-price">₹{order.amount}</div>
               <div className="request-meta"><b>Category:</b> {order.category || "N/A"}</div>
-              <div className="request-meta"><b>Description:</b> {order.description || "No description"}</div>
+              <div className="request-meta"><b>Description:</b> <ReadMore text={order.description} /></div>
               {order.sellerId?._id && (
                 <div className="request-meta d-flex align-items-center gap-2">
                   <img
@@ -185,7 +196,7 @@ const BuyerRequests = () => {
               </h3>
               <div className="product-price">₹{order.amount}</div>
               <div className="request-meta"><b>Category:</b> {order.category || "N/A"}</div>
-              <div className="request-meta"><b>Description:</b> {order.description || "No description"}</div>
+              <div className="request-meta"><b>Description:</b> <ReadMore text={order.description} /></div>
               {order.sellerId?._id && (
                 <div className="request-meta d-flex align-items-center gap-2">
                   <img

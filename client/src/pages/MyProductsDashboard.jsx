@@ -46,7 +46,6 @@ const MyProductsDashboard = () => {
   const [loadingListings, setLoadingListings] = useState(true);
 
   const [buyerTab, setBuyerTab] = useState("pending"); // pending | accepted | rejected
-  const [expandedGroup, setExpandedGroup] = useState("listings"); // listings | buyer | seller
   const [activeSection, setActiveSection] = useState({ group: "listings", sub: "available" });
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -417,18 +416,19 @@ const MyProductsDashboard = () => {
   }
 
   const setSection = (group, sub) => {
-    setExpandedGroup(group);
     setActiveSection({ group, sub });
     if (group === "buyer" && sub === "requests") setBuyerTab("pending");
     setMobileSidebarOpen(false);
   };
 
   return (
-    <Container className="py-4 mpd-page">
+    <Container fluid className="p-0 mpd-page">
       {message.text && (
-        <Alert variant={message.type} dismissible onClose={() => setMessage({ type: "", text: "" })}>
-          {message.text}
-        </Alert>
+        <div className="px-4 pt-3">
+          <Alert variant={message.type} dismissible onClose={() => setMessage({ type: "", text: "" })}>
+            {message.text}
+          </Alert>
+        </div>
       )}
 
       <div className="mpd-topbar d-lg-none">
@@ -460,69 +460,63 @@ const MyProductsDashboard = () => {
           </div>
 
           <div className="mpd-nav">
-            <button type="button" className={`mpd-group ${expandedGroup === "listings" ? "expanded" : ""}`} onClick={() => setExpandedGroup("listings")}>
+            {/* MY LISTINGS */}
+            <button type="button" className="mpd-group expanded" disabled>
               <span className="mpd-group-label">
-                <i className="fa-solid fa-box-open me-2" />
+                <i className="fa-solid fa-box-open" />
                 My Listings
               </span>
-              <i className={`fa-solid fa-chevron-${expandedGroup === "listings" ? "down" : "right"}`} />
             </button>
-            {expandedGroup === "listings" && (
-              <div className="mpd-subnav">
-                <button type="button" className={`mpd-item ${activeSection.group === "listings" && activeSection.sub === "available" ? "active" : ""}`} onClick={() => setSection("listings", "available")}>
-                  <span>Available Products</span>
-                  <Badge bg="success">{products.filter((p) => p.status !== "sold").length}</Badge>
-                </button>
-                <button type="button" className={`mpd-item ${activeSection.group === "listings" && activeSection.sub === "sold" ? "active" : ""}`} onClick={() => setSection("listings", "sold")}>
-                  <span>Sold Products</span>
-                  <Badge bg="secondary">{products.filter((p) => p.status === "sold").length}</Badge>
-                </button>
-              </div>
-            )}
+            <div className="mpd-subnav">
+              <button type="button" className={`mpd-item ${activeSection.group === "listings" && activeSection.sub === "available" ? "active" : ""}`} onClick={() => setSection("listings", "available")}>
+                <span>Available Products</span>
+                <Badge bg="success">{products.filter((p) => p.status !== "sold").length}</Badge>
+              </button>
+              <button type="button" className={`mpd-item ${activeSection.group === "listings" && activeSection.sub === "sold" ? "active" : ""}`} onClick={() => setSection("listings", "sold")}>
+                <span>Sold Products</span>
+                <Badge bg="secondary">{products.filter((p) => p.status === "sold").length}</Badge>
+              </button>
+            </div>
 
-            <button type="button" className={`mpd-group ${expandedGroup === "buyer" ? "expanded" : ""}`} onClick={() => setExpandedGroup("buyer")}>
+            {/* BUYER */}
+            <button type="button" className="mpd-group expanded" disabled>
               <span className="mpd-group-label">
-                <i className="fa-solid fa-bag-shopping me-2" />
+                <i className="fa-solid fa-bag-shopping" />
                 Buyer
               </span>
-              <i className={`fa-solid fa-chevron-${expandedGroup === "buyer" ? "down" : "right"}`} />
             </button>
-            {expandedGroup === "buyer" && (
-              <div className="mpd-subnav">
-                <button type="button" className={`mpd-item ${activeSection.group === "buyer" && activeSection.sub === "requests" ? "active" : ""}`} onClick={() => setSection("buyer", "requests")}>
-                  <span>My Requests</span>
-                  <Badge bg="secondary">{buyerPending.length + buyerAccepted.length + buyerRejected.length}</Badge>
-                </button>
-                <button type="button" className={`mpd-item ${activeSection.group === "buyer" && activeSection.sub === "purchases" ? "active" : ""}`} onClick={() => setSection("buyer", "purchases")}>
-                  <span>Purchased Products</span>
-                  <Badge bg="secondary">{buyerCompleted.length}</Badge>
-                </button>
-              </div>
-            )}
+            <div className="mpd-subnav">
+              <button type="button" className={`mpd-item ${activeSection.group === "buyer" && activeSection.sub === "requests" ? "active" : ""}`} onClick={() => setSection("buyer", "requests")}>
+                <span>My Requests</span>
+                <Badge bg="secondary">{buyerPending.length + buyerAccepted.length + buyerRejected.length}</Badge>
+              </button>
+              <button type="button" className={`mpd-item ${activeSection.group === "buyer" && activeSection.sub === "purchases" ? "active" : ""}`} onClick={() => setSection("buyer", "purchases")}>
+                <span>Purchased Products</span>
+                <Badge bg="secondary">{buyerCompleted.length}</Badge>
+              </button>
+            </div>
 
-            <button type="button" className={`mpd-group ${expandedGroup === "seller" ? "expanded" : ""}`} onClick={() => setExpandedGroup("seller")}>
+            {/* SELLER */}
+            <button type="button" className="mpd-group expanded" disabled>
               <span className="mpd-group-label">
-                <i className="fa-solid fa-store me-2" />
+                <i className="fa-solid fa-store" />
                 Seller
               </span>
-              <i className={`fa-solid fa-chevron-${expandedGroup === "seller" ? "down" : "right"}`} />
             </button>
-            {expandedGroup === "seller" && (
-              <div className="mpd-subnav">
-                <button type="button" className={`mpd-item ${activeSection.group === "seller" && activeSection.sub === "incoming" ? "active" : ""}`} onClick={() => setSection("seller", "incoming")}>
-                  <span>Incoming Requests</span>
-                  <Badge bg="secondary">{sellerIncoming.length}</Badge>
-                </button>
-                <button type="button" className={`mpd-item ${activeSection.group === "seller" && activeSection.sub === "upcoming" ? "active" : ""}`} onClick={() => setSection("seller", "upcoming")}>
-                  <span>Upcoming Shipping</span>
-                  <Badge bg="secondary">{sellerUpcomingShipping.length}</Badge>
-                </button>
-                <button type="button" className={`mpd-item ${activeSection.group === "seller" && activeSection.sub === "completed" ? "active" : ""}`} onClick={() => setSection("seller", "completed")}>
-                  <span>Completed Orders</span>
-                  <Badge bg="secondary">{sellerCompleted.length}</Badge>
-                </button>
-              </div>
-            )}
+            <div className="mpd-subnav">
+              <button type="button" className={`mpd-item ${activeSection.group === "seller" && activeSection.sub === "incoming" ? "active" : ""}`} onClick={() => setSection("seller", "incoming")}>
+                <span>Incoming Requests</span>
+                <Badge bg="secondary">{sellerIncoming.length}</Badge>
+              </button>
+              <button type="button" className={`mpd-item ${activeSection.group === "seller" && activeSection.sub === "upcoming" ? "active" : ""}`} onClick={() => setSection("seller", "upcoming")}>
+                <span>Upcoming Shipping</span>
+                <Badge bg="secondary">{sellerUpcomingShipping.length}</Badge>
+              </button>
+              <button type="button" className={`mpd-item ${activeSection.group === "seller" && activeSection.sub === "completed" ? "active" : ""}`} onClick={() => setSection("seller", "completed")}>
+                <span>Completed Orders</span>
+                <Badge bg="secondary">{sellerCompleted.length}</Badge>
+              </button>
+            </div>
           </div>
         </aside>
 

@@ -468,20 +468,31 @@ router.delete("/withdraw/:id", authMiddleware, async (req, res) => {
     });
 
     if (!order) {
-      return res.status(404).json({ msg: "Order not found" });
+      return res.status(404).json({ msg: "Order not found or cannot be withdrawn" });
     }
 
-    // Soft-delete: set status to withdrawn (preserves chat access)
+    const productId = order.productId;
+
+    // Soft-delete: set status to withdrawn
     order.status = "withdrawn";
     await order.save();
 
-    res.json({ msg: "Order withdrawn successfully" });
+    // ✅ Reset product status back to available so it reappears in marketplace
+    if (productId) {
+      await Product.findByIdAndUpdate(productId, {
+        status: "available",
+        $unset: { soldTo: "" },
+      });
+    }
+
+    res.json({ msg: "Request withdrawn successfully. Product is now available again." });
 
   } catch (error) {
     console.error("Withdraw Error:", error);
     res.status(500).json({ msg: "Server Error" });
   }
 });
+
 
 
 // ===============================

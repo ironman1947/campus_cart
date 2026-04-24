@@ -10,7 +10,7 @@ import {
     Nav,
     Carousel
 } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import './Home.css';
@@ -27,7 +27,7 @@ const categories = [
     { name: 'Books', icon: 'fa-book' },
     { name: 'Electronics', icon: 'fa-microchip' },
     { name: 'Hostel', icon: 'fa-house' },
-    { name: 'Clothing', icon: 'fa-shirt' },
+    { name: 'Stationery', icon: 'fa-pen-ruler' },
     { name: 'Lab', icon: 'fa-flask' },
     { name: 'Sports', icon: 'fa-futbol' },
     { name: 'Others', icon: 'fa-ellipsis' }
@@ -38,7 +38,8 @@ const Home = () => {
     const { isAuthenticated, user, loadUser } = useContext(AuthContext);
 
     const [products, setProducts] = useState([]);
-    const [search, setSearch] = useState('');
+    const [searchParams] = useSearchParams();
+    const search = searchParams.get('q') || '';
     const [category, setCategory] = useState('All');
     const [productsExpanded, setProductsExpanded] = useState(false);
 
@@ -124,17 +125,7 @@ const Home = () => {
                 </Carousel>
             </Container>
 
-            {/* ================= SEARCH BAR ================= */}
-            <Container className="mt-4">
-                <Form>
-                    <Form.Control
-                        type="text"
-                        placeholder="Search products..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
-                </Form>
-            </Container>
+
 
             {/* ================= PRODUCT LIST ================= */}
             <div className="home-products-section">

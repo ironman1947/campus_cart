@@ -183,11 +183,14 @@ const MyProfile = () => {
                                     disabled={!editing}
                                 >
                                     <option value="">Select Department</option>
-                                    <option value="Computer Engineering">Computer Engineering</option>
-                                    <option value="Information Technology">Information Technology</option>
-                                    <option value="Mechanical Engineering">Mechanical Engineering</option>
-                                    <option value="Civil Engineering">Civil Engineering</option>
+                                    <option value="Computer Science Engineering">Computer Science Engineering</option>
+                                    <option value="CSE (AIML) Engineering">CSE (AIML) Engineering</option>
+                                    <option value="Computer Science & Business System Engineering">Computer Science &amp; Business System Engineering</option>
                                     <option value="Electronics Engineering">Electronics Engineering</option>
+                                    <option value="Electrical Engineering">Electrical Engineering</option>
+                                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                    <option value="MBA">MBA</option>
+                                    <option value="MCA">MCA</option>
                                 </Form.Select>
                             </Form.Group>
                         </Col>

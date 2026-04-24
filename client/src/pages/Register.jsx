@@ -43,12 +43,21 @@ const Register = () => {
         <div
             style={{
                 minHeight: "100vh",
-                background: "#f5f7fb",
+                background: "linear-gradient(-45deg, #E3F2FD, #EDE7F6, #E0F7FA, #F8FAFC)",
+                backgroundSize: "400% 400%",
+                animation: "gradientBG 10s ease infinite",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
             }}
         >
+            <style>{`
+                @keyframes gradientBG {
+                    0%   { background-position: 0% 50%; }
+                    50%  { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                }
+            `}</style>
             <Container>
 
                 {/* Heading */}
@@ -129,11 +138,14 @@ const Register = () => {
                                         required
                                     >
                                         <option value="">Select Department</option>
-                                        <option>Computer Engineering</option>
-                                        <option>Information Technology</option>
-                                        <option>Mechanical Engineering</option>
-                                        <option>Civil Engineering</option>
-                                        <option>Electronics Engineering</option>
+                                        <option value="Computer Science Engineering">Computer Science Engineering</option>
+                                        <option value="CSE (AIML) Engineering">CSE (AIML) Engineering</option>
+                                        <option value="Computer Science & Business System Engineering">Computer Science &amp; Business System Engineering</option>
+                                        <option value="Electronics Engineering">Electronics Engineering</option>
+                                        <option value="Electrical Engineering">Electrical Engineering</option>
+                                        <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                        <option value="MBA">MBA</option>
+                                        <option value="MCA">MCA</option>
                                     </Form.Select>
                                 </Form.Group>
                             </Col>

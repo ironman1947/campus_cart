@@ -1,10 +1,10 @@
 /* =====================================================
-   MyProductsDashboard — Full Redesign
+   MyProductsDashboard — Light Sidebar, Fixed Layout
    ===================================================== */
 
 /* Page container */
 .mpd-page {
-  max-width: 1300px;
+  /* No max-width restriction — sidebar is fixed, content fills rest */
 }
 
 /* ---- TOPBAR (mobile only) ---- */
@@ -31,59 +31,66 @@
   font-weight: 600;
 }
 
-/* ---- GRID LAYOUT ---- */
+/* ---- LAYOUT: sidebar is fixed, content scrolls independently ---- */
 .mpd-layout {
-  display: grid;
-  grid-template-columns: 270px 1fr;
-  gap: 22px;
-  align-items: stretch;   /* sidebar stretches to content height */
-  min-height: calc(100vh - 160px);
+  display: block;
+  min-height: 100vh;
 }
 
-/* ---- SIDEBAR ---- */
+/* =====================================================
+   FIXED SIDEBAR
+   ===================================================== */
 .mpd-sidebar {
-  background: #fff;
-  border: 1px solid #e8edf4;
-  border-radius: 20px;
-  padding: 20px 14px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-  /* Sticky so it stays visible while scrolling content */
-  position: sticky;
-  top: 80px;
-  align-self: start;
-  max-height: calc(100vh - 100px);
+  position: fixed;
+  left: 0;
+  top: 64px;            /* sits below the navbar */
+  width: 260px;
+  height: calc(100vh - 64px);
+  background: #ffffff;
+  border: none;
+  border-right: 1px solid #e2e8f0;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.06);
   overflow-y: auto;
   overflow-x: hidden;
+  z-index: 200;
+  padding: 0;
 }
 
-/* Thin scrollbar on sidebar */
+/* Thin scrollbar */
 .mpd-sidebar::-webkit-scrollbar { width: 4px; }
-.mpd-sidebar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+.mpd-sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
 .mpd-sidebar-header {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 0 4px 14px;
-  border-bottom: 1px solid #e8edf4;
-  margin-bottom: 12px;
+  padding: 20px 18px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #E3F2FD 0%, #EDE7F6 100%);
 }
 
 .mpd-sidebar-title {
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: #1e293b;
   letter-spacing: -0.01em;
+}
+
+.mpd-sidebar-header .text-muted {
+  color: #64748b !important;
+  font-size: 0.8rem;
 }
 
 /* ---- NAV ---- */
 .mpd-nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
+  padding: 8px 10px;
 }
 
-/* Group button (expandable section) */
+/* Section label (non-clickable heading) */
 .mpd-group {
   width: 100%;
   border: none;
@@ -92,76 +99,73 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 11px 14px;
-  border-radius: 12px;
-  color: #334155;
+  padding: 12px 12px 4px;
+  border-radius: 0;
+  color: #94a3b8;
   font-weight: 700;
-  font-size: 0.92rem;
-  cursor: pointer;
-  transition: background 0.18s, color 0.18s;
-  letter-spacing: 0.01em;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: default;
+  pointer-events: none;
 }
 
-.mpd-group:hover {
-  background: #f1f5f9;
-  color: #0d6efd;
-}
-
-.mpd-group.expanded {
-  background: #eff6ff;
-  color: #0d6efd;
-}
+.mpd-group:hover  { background: transparent; color: #94a3b8; }
+.mpd-group.expanded { background: transparent; color: #94a3b8; }
 
 .mpd-group-label {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
-/* Sub-nav */
+/* Sub-nav always visible */
 .mpd-subnav {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding-left: 10px;
-  padding-right: 6px;
-  margin-bottom: 4px;
+  gap: 1px;
+  padding: 0 6px;
+  margin-bottom: 6px;
 }
 
-/* Individual item */
+/* Individual nav items */
 .mpd-item {
   width: 100%;
-  border: 1px solid transparent;
+  border: none;
   background: transparent;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 9px 12px;
-  border-radius: 10px;
+  padding: 9px 14px;
+  border-radius: 8px;
   color: #475569;
   font-weight: 500;
   font-size: 0.88rem;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
 
 .mpd-item:hover {
-  background: #f8fafc;
+  background: #f1f5f9;
   color: #0d6efd;
 }
 
 .mpd-item.active {
   background: #eff6ff;
   color: #0d6efd;
-  border-color: rgba(13,110,253,0.2);
   font-weight: 700;
-  box-shadow: inset 4px 0 0 #0d6efd;
+  box-shadow: inset 3px 0 0 #0d6efd;
 }
 
-/* ---- CONTENT AREA ---- */
+/* =====================================================
+   CONTENT AREA — pushed right of the fixed sidebar
+   ===================================================== */
 .mpd-content {
-  min-width: 0;
+  margin-left: 260px;          /* exactly sidebar width */
+  padding: 32px 40px;
+  background: #f8fafc;
+  min-height: 100vh;
 }
 
 .mpd-content-header {
@@ -199,14 +203,12 @@
   box-shadow: 0 12px 32px rgba(0,0,0,0.1) !important;
 }
 
-/* Product image — use cover so no white padding, looks polished */
 .mpd-card-img {
   height: 210px;
   object-fit: cover !important;
   background: #f1f5f9;
 }
 
-/* Order card image */
 .mp-card .card-img-top {
   height: 190px;
   object-fit: cover !important;
@@ -261,37 +263,24 @@
   box-shadow: 0 2px 8px rgba(13,110,253,0.15);
 }
 
-/* ===================== MOBILE ===================== */
+/* =====================================================
+   MOBILE — sidebar becomes overlay
+   ===================================================== */
 @media (max-width: 991.98px) {
-  .mpd-layout {
-    grid-template-columns: 1fr;
-    min-height: unset;
-  }
-
-  /* Mobile: sidebar is a fixed overlay */
   .mpd-sidebar {
     display: none;
-    position: fixed;
     top: 0;
-    left: 0;
-    width: 290px;
     height: 100dvh;
-    max-height: 100dvh;
-    background: #fff;
+    width: 270px;
     z-index: 1060;
-    overflow-y: auto;
-    padding: 24px 16px;
-    box-shadow: 6px 0 28px rgba(0,0,0,0.16);
-    border-right: 1px solid #e2e8f0;
-    border-radius: 0;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
   }
 
-  /* Semi-transparent backdrop when open */
   .mpd-layout.sidebar-open::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.5);
+    background: rgba(15,23,42,0.5);
     z-index: 1055;
     backdrop-filter: blur(2px);
   }
@@ -299,13 +288,17 @@
   .mpd-layout.sidebar-open .mpd-sidebar {
     display: block;
   }
+
+  /* Content fills full width on mobile */
+  .mpd-content {
+    margin-left: 0;
+    padding: 16px;
+  }
 }
 
 @media (max-width: 575.98px) {
   .mpd-card-img,
-  .mp-card .card-img-top {
-    height: 170px;
-  }
+  .mp-card .card-img-top { height: 170px; }
 
   .mpd-content-header {
     flex-direction: column;

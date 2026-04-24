@@ -199,4 +199,17 @@ const PORT = process.env.PORT || 5000;
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+
+  // ✅ Keep-alive ping: prevents Render free tier from sleeping
+  // Pings itself every 14 minutes (Render sleeps after 15 min idle)
+  if (process.env.RENDER_EXTERNAL_URL) {
+    const pingUrl = process.env.RENDER_EXTERNAL_URL;
+    setInterval(() => {
+      require("https").get(pingUrl, (res) => {
+        console.log(`[Keep-alive] Pinged ${pingUrl} → ${res.statusCode}`);
+      }).on("error", (err) => {
+        console.warn("[Keep-alive] Ping failed:", err.message);
+      });
+    }, 14 * 60 * 1000); // every 14 minutes
+  }
 });

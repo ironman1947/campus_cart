@@ -107,35 +107,31 @@ const AdminDashboard = () => {
     return (
         <>
             {/* Admin Navbar */}
-            <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 px-4">
-                <Navbar.Brand style={{ fontSize: '1.5rem' }}>Admin Panel</Navbar.Brand>
-                <Nav className="me-auto" style={{ fontSize: '1.1rem' }}>
-                    <Nav.Link onClick={() => setActiveView('overview')} className="d-flex align-items-center">
-                        <i className="fa-solid fa-chart-line me-1"></i> Overview
-                    </Nav.Link>
-                    <Nav.Link onClick={() => setActiveView('users')} className="d-flex align-items-center">
-                        <i className="fa-solid fa-users me-1"></i> Users
-                    </Nav.Link>
-                    <Nav.Link onClick={() => setActiveView('products')} className="d-flex align-items-center">
-                        <i className="fa-solid fa-box-open me-1"></i> Products
-                    </Nav.Link>
-                    <Nav.Link onClick={() => setActiveView('orders')} className="d-flex align-items-center">
-                        <i className="fa-solid fa-receipt me-1"></i> Orders
-                    </Nav.Link>
-                </Nav>
-                <Nav className="d-flex align-items-center">
-                    <span className="text-light me-3" style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>
-                        {user?.name || 'Profile'}
-                    </span>
-                    <Button
-                        variant="primary"
-                        size="md"
-                        onClick={handleLogout}
-                        className="d-flex align-items-center"
-                    >
-                        <i className="fa-solid fa-right-from-bracket me-1"></i> Logout
-                    </Button>
-                </Nav>
+            <Navbar bg="dark" variant="dark" expand="lg" className="mb-4 px-4" style={{ width: '100%' }}>
+                <Navbar.Brand style={{ fontSize: '1.4rem', fontWeight: 800 }}>🛒 Admin Panel</Navbar.Brand>
+                <Navbar.Toggle aria-controls="admin-nav" />
+                <Navbar.Collapse id="admin-nav">
+                    <Nav className="mx-auto" style={{ fontSize: '1rem', gap: '8px', justifyContent: 'center', flex: 1 }}>
+                        <Nav.Link onClick={() => setActiveView('overview')} active={activeView==='overview'} className="d-flex align-items-center gap-1 px-3">
+                            <i className="fa-solid fa-chart-line"></i> Overview
+                        </Nav.Link>
+                        <Nav.Link onClick={() => setActiveView('users')} active={activeView==='users'} className="d-flex align-items-center gap-1 px-3">
+                            <i className="fa-solid fa-users"></i> Users
+                        </Nav.Link>
+                        <Nav.Link onClick={() => setActiveView('products')} active={activeView==='products'} className="d-flex align-items-center gap-1 px-3">
+                            <i className="fa-solid fa-box-open"></i> Products
+                        </Nav.Link>
+                        <Nav.Link onClick={() => setActiveView('orders')} active={activeView==='orders'} className="d-flex align-items-center gap-1 px-3">
+                            <i className="fa-solid fa-receipt"></i> Orders
+                        </Nav.Link>
+                    </Nav>
+                    <Nav className="d-flex align-items-center gap-3">
+                        <span className="text-light fw-bold">{user?.name || 'Admin'}</span>
+                        <Button variant="outline-light" size="sm" onClick={handleLogout} className="d-flex align-items-center gap-1">
+                            <i className="fa-solid fa-right-from-bracket"></i> Logout
+                        </Button>
+                    </Nav>
+                </Navbar.Collapse>
             </Navbar>
 
             <Container className="mt-3">
@@ -144,38 +140,41 @@ const AdminDashboard = () => {
 
                 {activeView === 'overview' && (
                     <Row className="g-3 mb-4">
-                        <Col md={3}>
-                            <Card className="shadow-sm">
-                                <Card.Body>
-                                    <div className="text-muted small">Total Users</div>
-                                    <h3 className="mb-0">{stats.totalUsers || 0}</h3>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                        <Col md={3}>
-                            <Card className="shadow-sm">
-                                <Card.Body>
-                                    <div className="text-muted small">Total Products</div>
-                                    <h3 className="mb-0">{stats.totalProducts || 0}</h3>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                        <Col md={3}>
-                            <Card className="shadow-sm">
-                                <Card.Body>
-                                    <div className="text-muted small">Total Orders</div>
-                                    <h3 className="mb-0">{stats.totalOrders || 0}</h3>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                        <Col md={3}>
-                            <Card className="shadow-sm">
-                                <Card.Body>
-                                    <div className="text-muted small">Open Reports</div>
-                                    <h3 className="mb-0">{stats.openReports || 0}</h3>
-                                </Card.Body>
-                            </Card>
-                        </Col>
+                        {[
+                            { label: 'Total Users', value: stats.totalUsers || 0, icon: 'fa-users', color: '#4f46e5', bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+                            { label: 'Total Products', value: stats.totalProducts || 0, icon: 'fa-box-open', color: '#059669', bg: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)' },
+                            { label: 'Total Orders', value: stats.totalOrders || 0, icon: 'fa-receipt', color: '#d97706', bg: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' },
+                            { label: 'Open Reports', value: stats.openReports || 0, icon: 'fa-flag', color: '#dc2626', bg: 'linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%)' },
+                        ].map((card) => (
+                            <Col md={3} sm={6} key={card.label}>
+                                <Card className="border-0 shadow-sm" style={{
+                                    borderRadius: 16,
+                                    background: card.bg,
+                                    color: '#fff',
+                                    transition: 'transform 0.2s, box-shadow 0.2s',
+                                    cursor: 'default',
+                                    overflow: 'hidden'
+                                }}
+                                    onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-6px)'}
+                                    onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                                >
+                                    <Card.Body className="d-flex justify-content-between align-items-center p-4">
+                                        <div>
+                                            <div style={{ fontSize: '0.85rem', opacity: 0.85, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>{card.label}</div>
+                                            <div style={{ fontSize: '2.4rem', fontWeight: 900, lineHeight: 1.1, marginTop: 4 }}>{card.value}</div>
+                                        </div>
+                                        <div style={{
+                                            width: 54, height: 54, borderRadius: '50%',
+                                            background: 'rgba(255,255,255,0.22)',
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                            fontSize: '1.5rem'
+                                        }}>
+                                            <i className={`fa-solid ${card.icon}`}></i>
+                                        </div>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ))}
                     </Row>
                 )}
 

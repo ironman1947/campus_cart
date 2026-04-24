@@ -21,6 +21,9 @@ const ProductDetails = () => {
   const [loadingRequest, setLoadingRequest] = useState(false);
   const [sellerRating, setSellerRating] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [descExpanded, setDescExpanded] = useState(false);
+
+  const DESC_LIMIT = 300; // characters before Read More
 
   // ================= FETCH PRODUCT =================
   useEffect(() => {
@@ -164,7 +167,11 @@ const ProductDetails = () => {
           <Col md={6}>
             <h2>{product.title}</h2>
             <h4>₹{product.price}</h4>
-            <p>{product.description}</p>
+            <p>
+              {product.description && product.description.length > DESC_LIMIT && !descExpanded
+                ? <>{product.description.slice(0, DESC_LIMIT)}… <button className='btn btn-link p-0 text-primary' style={{fontSize:'0.9rem',verticalAlign:'baseline'}} onClick={() => setDescExpanded(true)}>Read More</button></>
+                : <>{product.description}<br/>{product.description && product.description.length > DESC_LIMIT && <button className='btn btn-link p-0 text-primary' style={{fontSize:'0.9rem',verticalAlign:'baseline'}} onClick={() => setDescExpanded(false)}>Show Less</button>}</>}
+            </p>
 
             <p><b>Category:</b> {product.category}</p>
 
@@ -293,7 +300,7 @@ const ProductDetails = () => {
         {/* ================= RELATED PRODUCTS ================= */}
         {relatedProducts.length > 0 && (
           <div className="pd-related-section mt-5">
-            <h4 className="pd-related-title">Related Products</h4>
+            <h4 className="pd-related-title">You may also like</h4>
             <Row xs={2} md={3} lg={4} className="g-3">
               {relatedProducts.map((rp) => (
                 <Col key={rp._id}>
@@ -302,16 +309,24 @@ const ProductDetails = () => {
                     to={`/product/${rp._id}`}
                     className="pd-related-card text-decoration-none text-dark h-100 border-0 shadow-sm"
                   >
-                    <Card.Img
-                      variant="top"
-                      src={getImageUrl(rp.images?.[0])}
-                      className="pd-related-img"
-                    />
+                    <div style={{ position: 'relative', overflow: 'hidden' }}>
+                      <Card.Img
+                        variant="top"
+                        src={getImageUrl(rp.images?.[0])}
+                        className="pd-related-img"
+                        style={{ transition: 'transform 0.3s ease' }}
+                        onMouseEnter={e => e.target.style.transform='scale(1.07)'}
+                        onMouseLeave={e => e.target.style.transform='scale(1)'}
+                      />
+                    </div>
                     <Card.Body className="p-2">
-                      <div className="pd-related-card-title text-truncate fw-semibold small">
-                        {rp.title}
-                      </div>
-                      <div className="text-primary fw-bold small">₹{rp.price}</div>
+                      <div className="pd-related-card-title fw-semibold small mb-1" style={{ overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{rp.title}</div>
+                      <div className="text-primary fw-bold small mb-1">₹{rp.price}</div>
+                      {rp.description && (
+                        <div className="text-muted" style={{ fontSize:'0.78rem', lineHeight:1.4, display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' }}>
+                          {rp.description}
+                        </div>
+                      )}
                     </Card.Body>
                   </Card>
                 </Col>

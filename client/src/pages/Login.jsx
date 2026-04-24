@@ -54,13 +54,64 @@ const Login = () => {
         <div
             style={{
                 minHeight: "100vh",
-                background: "#f5f7fb",
+                background: "linear-gradient(-45deg, #E3F2FD, #EDE7F6, #E0F7FA, #F8FAFC)",
+                backgroundSize: "400% 400%",
+                animation: "gradientBG 10s ease infinite",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 position: "relative"
             }}
         >
+            <style>{`
+                @keyframes gradientBG {
+                    0%   { background-position: 0% 50%; }
+                    50%  { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                }
+                .glass-card {
+                    background: rgba(255, 255, 255, 0.7);
+                    backdrop-filter: blur(16px);
+                    -webkit-backdrop-filter: blur(16px);
+                    border: 1px solid rgba(255, 255, 255, 0.5);
+                    border-radius: 24px;
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                }
+                .glass-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
+                }
+                .floating-blob {
+                    position: absolute;
+                    border-radius: 50%;
+                    filter: blur(40px);
+                    z-index: 0;
+                    opacity: 0.6;
+                    animation: float 8s infinite ease-in-out alternate;
+                }
+                @keyframes float {
+                    0% { transform: translateY(0px) scale(1); }
+                    100% { transform: translateY(30px) scale(1.1); }
+                }
+                .interactive-input:focus {
+                    border-color: #2563eb !important;
+                    box-shadow: 0 0 0 4px rgba(37,99,235,0.1) !important;
+                    background-color: #fff !important;
+                }
+                .sign-in-btn {
+                    transition: all 0.2s ease;
+                }
+                .sign-in-btn:hover {
+                    transform: scale(1.02);
+                    box-shadow: 0 8px 15px rgba(37,99,235,0.3);
+                }
+            `}</style>
+            
+            {/* Background Blobs */}
+            <div className="floating-blob" style={{ width: "300px", height: "300px", background: "#bfdbfe", top: "10%", left: "15%", animationDelay: "0s" }}></div>
+            <div className="floating-blob" style={{ width: "250px", height: "250px", background: "#f3e8ff", bottom: "15%", right: "10%", animationDelay: "2s" }}></div>
+            <div className="floating-blob" style={{ width: "150px", height: "150px", background: "#cffafe", top: "40%", left: "60%", animationDelay: "4s" }}></div>
+
             {/* 🔙 Back Button */}
             <Button
                 variant="light"
@@ -76,7 +127,7 @@ const Login = () => {
                 ← Back
             </Button>
 
-            <Container style={{ maxWidth: "420px" }}>
+            <Container style={{ maxWidth: "460px", zIndex: 1, position: "relative" }}>
 
                 {/* Logo Icon
                 <div className="text-center mb-3">
@@ -101,16 +152,16 @@ const Login = () => {
 
                 {/* Heading */}
                 <div className="text-center mb-4">
-                    <h2 className="fw-bold">Welcome back to CampusCart</h2>
-                    <p className="text-muted">Sign in to your student account</p>
+                    <div className="mb-3">
+                        <i className="fa-solid fa-building-columns" style={{ fontSize: "2.5rem", color: "#2563eb", textShadow: "0 4px 10px rgba(37,99,235,0.2)" }}></i>
+                    </div>
+                    <h2 className="fw-bold" style={{ fontSize: "1.8rem", color: "#1e293b" }}>Welcome to CampusCart</h2>
+                    <p className="text-muted" style={{ fontSize: "1.1rem" }}>Sign in to your student account</p>
                 </div>
 
                 <Card
-                    className="shadow-sm p-4"
-                    style={{
-                        borderRadius: "20px",
-                        border: "none"
-                    }}
+                    className="shadow p-4 p-sm-5 glass-card"
+                    style={{ border: "none" }}
                 >
                     {error && <Alert variant="danger">{error}</Alert>}
 
@@ -146,7 +197,8 @@ const Login = () => {
                                     value={password}
                                     onChange={onChange}
                                     placeholder="••••••••"
-                                    style={inputStyle}
+                                    className="interactive-input"
+                                style={inputStyle}
                                     required
                                 />
 
@@ -171,35 +223,21 @@ const Login = () => {
                         {/* Button */}
                         <Button
                             type="submit"
-                            className="w-100"
+                            className="w-100 mt-2 sign-in-btn"
                             disabled={loading}
                             style={{
-                                background: "linear-gradient(90deg, #2563eb, #1d4ed8)",
+                                background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
                                 border: "none",
-                                padding: "12px",
-                                borderRadius: "10px",
+                                padding: "14px",
+                                borderRadius: "12px",
+                                fontSize: "1.1rem",
                                 fontWeight: "600"
                             }}
                         >
-                            {loading ? 'Signing in…' : 'Sign In →'}
+                            {loading ? 'Checking Credentials…' : 'Sign In →'}
                         </Button>
 
                     </Form>
-
-                    {/* Divider */}
-                    <hr className="my-4" />
-
-                    {/* Extra Button */}
-                    <Button
-                        variant="light"
-                        className="w-100"
-                        style={{
-                            borderRadius: "10px",
-                            padding: "10px"
-                        }}
-                    >
-                        Continue with Student ID
-                    </Button>
                 </Card>
 
                 {/* Bottom link */}
@@ -215,10 +253,11 @@ const Login = () => {
 };
 
 const inputStyle = {
-    borderRadius: "10px",
-    padding: "10px",
-    backgroundColor: "#f9fafb",
-    border: "1px solid #e5e7eb"
+    borderRadius: "12px",
+    padding: "14px 16px",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
+    border: "1px solid rgba(0, 0, 0, 0.05)",
+    transition: "all 0.2s ease"
 };
 
 export default Login;
