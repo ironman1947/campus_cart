@@ -474,8 +474,7 @@ router.delete("/withdraw/:id", authMiddleware, async (req, res) => {
     const productId = order.productId;
 
     // Soft-delete: set status to withdrawn
-    order.status = "withdrawn";
-    await order.save();
+     await Order.findByIdAndDelete(req.params.id);
 
     // ✅ Reset product status back to available so it reappears in marketplace
     if (productId) {
