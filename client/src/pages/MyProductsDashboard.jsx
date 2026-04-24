@@ -176,18 +176,31 @@ const MyProductsDashboard = () => {
     }
   };
 
-  const withdrawRequest = async (id) => {
-    try {
-      setBusyWithdraw(id);
-      await api.delete(`/orders/withdraw/${id}`);
-      await refreshBuyer();
-      setMessage({ type: "success", text: "Request withdrawn successfully." });
-    } catch (err) {
-      setMessage({ type: "danger", text: err.response?.data?.msg || "Failed to withdraw request" });
-    } finally {
-      setBusyWithdraw(null);
-    }
-  };
+ const withdrawRequest = async (id) => {
+  try {
+    setBusyWithdraw(id);
+
+    await api.delete(`/orders/withdraw/${id}`);
+
+    // ✅ Instantly remove from UI (better UX)
+    setBuyerPending((prev) => prev.filter((o) => o._id !== id));
+    setBuyerAccepted((prev) => prev.filter((o) => o._id !== id));
+    setBuyerRejected((prev) => prev.filter((o) => o._id !== id));
+
+    // Optional: still refresh from backend (safe sync)
+    await refreshBuyer();
+
+    setMessage({ type: "success", text: "Request withdrawn successfully." });
+
+  } catch (err) {
+    setMessage({
+      type: "danger",
+      text: err.response?.data?.msg || "Failed to withdraw request",
+    });
+  } finally {
+    setBusyWithdraw(null);
+  }
+};
 
   const rejectRequest = async (id) => {
     try {
@@ -220,38 +233,6 @@ const MyProductsDashboard = () => {
     }
   };
 
-  const openChatWith = ({ productId, otherUserId, title, role }) => {
-    const params = new URLSearchParams({
-      productId: String(productId),
-      otherUserId: String(otherUserId),
-    });
-    params.set("title", title || "Chat");
-    if (role) params.set("role", role);
-    navigate(`/chat?${params.toString()}`);
-  };
-
-  const openChatWithSeller = (order) => {
-    const sellerId = order.sellerId?._id || order.sellerId;
-    if (!sellerId) return;
-    openChatWith({
-      productId: order.productId,
-      otherUserId: sellerId,
-      title: order.productTitle,
-      role: "Buyer",
-    });
-  };
-
-  const openChatWithBuyer = (order) => {
-    const buyerId = order.buyerId?._id || order.buyerId;
-    if (!buyerId) return;
-    openChatWith({
-      productId: order.productId,
-      otherUserId: buyerId,
-      title: order.productTitle,
-      role: "Seller",
-    });
-  };
-
   const submitReview = async (order) => {
     const draft = reviewDrafts[order._id] || {};
     const rating = Number(draft.rating);
@@ -275,7 +256,7 @@ const MyProductsDashboard = () => {
     }
   };
 
-  const renderOrderCard = ({ order, variant, canWithdraw, canReject, canAccept, canChat, canMarkCompleted }) => {
+  const renderOrderCard = ({ order, variant, canWithdraw, canReject, canAccept, canMarkCompleted }) => {
     const imageSrc = getImageUrl(order.productImage || order.images?.[0], { placeholderSize: 600 });
     const status = order.status;
     const peer =
@@ -395,13 +376,7 @@ const MyProductsDashboard = () => {
             </div>
           )}
 
-          {canChat && (
-            <div className="mt-3">
-              <Button size="sm" variant="primary" onClick={() => (variant === "buyer" ? openChatWithSeller(order) : openChatWithBuyer(order))}>
-                Chat
-              </Button>
-            </div>
-          )}
+
         </Card.Body>
       </Card>
     );

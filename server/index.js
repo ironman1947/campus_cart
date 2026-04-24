@@ -36,25 +36,8 @@ const corsOptions = {
 };
 
 // ==========================
-// Socket.IO Setup
-// ==========================
-const { Server } = require("socket.io");
-
-const io = new Server(server, {
-  cors: {
-    origin: isAllowedOrigin,
-    methods: ["GET", "POST"],
-    credentials: true
-  },
-  transports: ["websocket", "polling"],
-  pingInterval: 25000,
-  pingTimeout: 60000
-});
-
-// ==========================
 // Models
 // ==========================
-const Message = require("./models/Message");
 const Product = require("./models/Product");
 const Order = require("./models/Order");
 
@@ -83,106 +66,10 @@ app.get("/", (req, res) => {
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/products", require("./routes/productRoutes"));
 app.use("/api/orders", require("./routes/orderRoutes"));
-app.use("/api/admin", require("./routes/admin"));
-app.use("/api/chat", require("./routes/chatRoutes"));
+    app.use("/api/admin", require("./routes/admin"));
 app.use("/api/reviews", require("./routes/reviewRoutes"));
 app.use("/api/reports", require("./routes/reportRoutes"));
 
-// ==========================
-// Socket Auth Middleware
-// ==========================
-io.use((socket, next) => {
-  try {
-    const token =
-      socket.handshake.auth?.token ||
-      socket.handshake.headers?.authorization?.replace("Bearer ", "");
-
-    if (!token) return next(new Error("No token"));
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    socket.user = decoded?.user || decoded;
-    next();
-  } catch (err) {
-    next(new Error("Invalid token"));
-  }
-});
-
-// ==========================
-// Rooms
-// ==========================
-const productRoom = (id) => `product:${id}`;
-const userRoom = (id) => `user:${id}`;
-
-// ==========================
-// Socket Connection
-// ==========================
-io.on("connection", (socket) => {
-  const userId = socket.user?.id;
-
-  if (userId) {
-    socket.join(userRoom(userId));
-    console.log(`[Socket] User ${userId} connected: ${socket.id}`);
-  }
-
-  // Join product chat room
-  socket.on("join_product_chat", async ({ productId }) => {
-    try {
-      if (!productId || !userId) return;
-
-      const product = await Product.findById(productId).select("sellerId");
-      if (!product) return;
-
-      const isSeller = String(product.sellerId) === String(userId);
-      const isBuyer = await Order.exists({ productId, buyerId: userId });
-
-      if (!isSeller && !isBuyer) return;
-
-      socket.join(productRoom(productId));
-    } catch (err) {
-      console.error("join_product_chat error:", err);
-    }
-  });
-
-  // Send message
-  socket.on("send_message", async ({ productId, receiverId, message }) => {
-    try {
-      const text = typeof message === "string" ? message.trim() : "";
-
-      // Basic validation only — no silent drops from complex auth checks
-      if (!productId || !receiverId || !text || !userId) return;
-
-      const senderId = String(userId);
-      const recvId  = String(receiverId);
-
-      const saved = await Message.create({
-        productId,
-        senderId,
-        receiverId: recvId,
-        message: text
-      });
-
-      const payload = {
-        _id:        saved._id,
-        productId:  String(saved.productId),
-        senderId:   String(saved.senderId),
-        receiverId: String(saved.receiverId),
-        message:    saved.message,
-        createdAt:  saved.createdAt
-      };
-
-      // Emit to both participants via their personal user rooms
-      io.to(userRoom(senderId)).emit("new_message", payload);
-      io.to(userRoom(recvId)).emit("new_message", payload);
-
-    } catch (err) {
-      console.error("send_message error:", err.message);
-    }
-  });
-
-  socket.on("disconnect", (reason) => {
-    console.log(`[Socket] User ${userId} disconnected: ${reason}`);
-  });
-});
 
 // ==========================
 // Error Handler

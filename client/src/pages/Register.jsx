@@ -103,7 +103,7 @@ const Register = () => {
                                         name="email"
                                         value={email}
                                         onChange={onChange}
-                                        placeholder="ishan@gmail.com"
+                                        placeholder="alex.rivers@university.edu"
                                         style={inputStyle}
                                         required
                                     />

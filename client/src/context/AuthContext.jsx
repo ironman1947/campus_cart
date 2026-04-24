@@ -1,6 +1,6 @@
 import React, { createContext, useReducer, useEffect } from 'react';
 import api from '../utils/api';
-import { destroySocket } from '../utils/socket';
+
 
 const initialState = {
     token: localStorage.getItem('token'),

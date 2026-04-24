@@ -23,17 +23,11 @@ import BuyerRequests from "./pages/BuyerRequests";
 import SellerRequests from "./pages/SellerRequests";
 import MyRequests from "./pages/MyRequests";
 import AcceptRequest from "./pages/AcceptRequest";
-import Chat from "./pages/Chat";
-import Messages from "./pages/Messages";
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-
-        <Route element={<PrivateRoute />}>
-          <Route path="/chat" element={<Chat />} />
-        </Route>
 
         <Route path="/accept-request/:orderId" element={<AcceptRequest />} />
           <Route path="/seller-requests" element={<SellerRequests />} />
@@ -133,16 +127,6 @@ function App() {
                 <>
                   <Navigation />
                   <MyProductsDashboard />
-                </>
-              }
-            />
-
-            <Route
-              path="/messages"
-              element={
-                <>
-                  <Navigation />
-                  <Messages />
                 </>
               }
             />

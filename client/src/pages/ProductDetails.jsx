@@ -277,22 +277,6 @@ const ProductDetails = () => {
                 )
               )}
 
-              {isAuthenticated && !isOwnProduct && (
-                <Button
-                  variant="primary"
-                  size="lg"
-                  className="ms-2"
-                  onClick={() =>
-                    navigate(
-                      `/chat?productId=${product._id}&otherUserId=${product.sellerId?._id}&title=${encodeURIComponent(
-                        product.title
-                      )}&role=${encodeURIComponent("Buyer")}`
-                    )
-                  }
-                >
-                  Chat with Seller
-                </Button>
-              )}
             </div>
           </Col>
         </Row>
